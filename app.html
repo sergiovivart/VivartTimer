@@ -1,0 +1,217 @@
+<!-- aplicacion simple para parsear link de nuevo videos en el navegador a partir 
+de un lista de link predispuesto epor el autor , y con notificaciones 
+adecuadas.
+
+Autor: Alki.
+fecha : 15/01/2020.
+Lugar : España. 
+Licensia : MIT.  -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Alki's Timer</title>
+	<link rel="stylesheet" href="milligram.min.css">
+</head>
+<body>
+
+	<!-- Esta es una aplicacion sencilla de una pagina usando el full stack y -->
+	<style>		
+			#nav {
+				height: 80px;
+				text-align: left;
+				padding: 20px 10px;
+				background-color: #6d119bf2;
+				width: 500px;
+				border-bottom-left-radius: 5px;
+				border-bottom-right-radius: 5px;
+				display: flex;
+				color : #fff;
+			}
+
+
+                #tiempo {
+					border : 1px solid #000;
+					margin :  10px 0 10px 0;
+					padding: 15px;
+					height: 80px;
+					border-radius: 10px;
+					position: relative;
+					width: 465px;
+				}
+
+
+               #list_box {
+				background: #6d119bf2;
+				padding: 20px;
+				min-height: 300px;
+				width: 500px;
+				position: relative;
+				float: left;
+				border-radius: 4px;
+				text-align: left;
+				text-shadow: 1px 1px #444;
+				color  : #fff !important;
+			   }
+
+			   #creditos {
+				   margin-left: 6px;
+				   text-align: center;
+				   position: relative;
+				   padding: 0;
+				   height: 30px;
+				   width: 170px;
+				   top: 5px;
+				   border-radius: 5px;
+				   border : 1px solid #000;
+			   }
+                 .check {
+					border : 1 px solid #000;
+				 }
+
+	</style>
+
+
+		 <!-- 7l navegacions -->
+		<nav class="container">
+			<div id="nav" class="row">
+				<h3>Alkis Timer</h3>
+			</div>
+		</nav>
+
+   <!-- los contadores -->
+	 <div class="container">
+		 <div id="tiempo" class="row">
+			  <h2><span class="minutos">0</span> : <span class="segundos">0</span> </h2>
+		 </div>
+	 </div>
+
+	 <!-- los controladores -->
+	 <div class="container">
+
+		  <div class="row">
+			   <a href="#" id="add" style=" margin-left: 12px;" class="button button-outline">Agregar link</a>
+			   <button id="lanzar" style=" margin-left: 12px;" class="button" type="button">Lanzar</button>
+               <span id="creditos"> <em>Made by</em><strong>Alki</strong></span>	
+			</div>
+
+		<div class="row">
+			<div class="column">
+				<input type="text" class="" value="" placeholder="link">
+			</div>
+			<div class="column column-30"></div>
+		</div>
+
+		
+	</div>
+
+<!--  -->
+	 <!-- las lsiat de reprodicion -->
+	 <div id="list_box" class="container">
+	    	<h3>Lista de reproduccion</h3>
+			 <ol>
+			 </ol>
+	 </div>
+
+	  
+	 <script>
+	  //Objeto con los links a ejecutar
+	  let data = {
+		  arr  :  [],
+	    cuenta :   0,
+		hook   :  []
+ 	  };
+
+	   // Los hooks
+	   let doc      = document;
+	   let input    = doc.querySelector('input');
+	   let ol       = doc.querySelector('ol');
+	   let contador = doc.querySelector('h2');
+
+	   // hooks spans
+	   let hSecs =  contador.querySelector('span.segundos'); // hokemaos segundos
+	   let hMins =  contador.querySelector('span.minutos'); // hokemaos segundos
+
+	   // con controles
+	   let lanzar = doc.getElementById('lanzar');
+	   let   add  = doc.getElementById('add');
+	   
+	   // la funcion para actualizar la lista y agregar al array
+	   add.addEventListener('click', function(e){
+          // vewmos is el inpu tiene algo o no es un link
+		  switch(input.value.trim()) {
+                case undefined:
+				case '':
+				   input.style.border = '1px solid red';
+				   e.preventDefault(); // prevenimos
+				break;
+				default:
+					let li         = doc.createElement('li');  //creamos
+					let contenido  = doc.createTextNode(input.value.trim());  //el nodod de texto
+					data.arr.push(input.value); //agregamos al arra de la data					
+					data.hook.push(li); // empujamos el elemento li.
+					ol.appendChild(li).appendChild(contenido);   // agregamos		
+					input.value = ''; // limpiamos el valor del input
+					input.style.border = '1px solid red';  //
+		  }
+	   });
+	   
+	   	  // Las contradores  
+		  let segundos = 1; 
+		  let minutos  = 0;
+
+       // el triger del event listener
+	   lanzar.addEventListener('click', (e) => {
+
+        //e l contador
+		let  x = 0;	
+		  	
+         // si el buffer tiene alo en su array
+		switch(data.arr.length) {
+			case 0:
+                e.preventDefault();  // prevenimos
+			break;
+			default:
+					// el inmtervalo minutero
+					var setinterval = 	setInterval(() => {
+						// equalizamos en el primer intrevalo
+						hSecs.textContent = segundos;
+						hMins.textContent = minutos;
+						// el swith dfe los segundos
+							switch(segundos){
+								case  parseInt(60): // al minuto
+									segundos = 1;                    // set
+									hSecs.textContent = '0'; // set 
+									hMins.textContent = minutos++; // add and set
+								break;	
+								default:
+										segundos++; /// add to seconds				
+										switch( minutos)
+										{
+												    case 5: // en caso de ser cinco minutos
+												        // si tenemos algo el arrayd e objeto.
+														if( data.arr.length !== 0)
+														{
+															data.hook[x++].style.borderBottom  = '1px solid #000'; // cambiamos estilo
+															window.open( data.arr.splice(0,1),  '_blank'); // abrimos  y eliminamos
+															data.cuenta++; //a gregamos												
+															minutos = 0;  // resetamos
+															e.preventDefault();
+														} else {
+															// equzlizamos
+															hSecs.textContent = '0';
+															hMins.textContent = '0';
+															clearInterval(setinterval); //stop intervalo
+														}
+												    break;
+										} // fin del inner swith
+								} // fin del swtich
+					}, 1000);  // fin del intervalo
+		    }
+		    // fin del switch
+	   });
+	   // fin del 
+	 </script>	
+</body>
+</html>
